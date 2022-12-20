@@ -11,9 +11,9 @@ library(ggplot2)
 library(cowplot)
 
 
-setwd("~/Dropbox/RA Angela Odermatt/Gruene DD") #anpassen
+setwd("") #anpassen
 
-load("Daten/Grüne_Abstimmungen.RData")
+load("Grüne_Abstimmungen.RData")
 
 
 ###################
@@ -31,16 +31,23 @@ green_votes$initiiert <- recode(green_votes$initiiert, `1` = "initiiert", `2` = 
 
 
 ggplot() + 
-  geom_point(data = green_votes, aes(y = jaStimmenInProzent, x = year, fill = rechtsform, colour = initiiert, shape = umwelt), size = 4) +  
-  geom_step(data = green_votes, aes(y = `w-gps`, x = year), color="grey") +
+  geom_point(data = green_votes, 
+             aes(y = jaStimmenInProzent, x = year, fill = rechtsform, colour = initiiert, shape = umwelt), 
+             size = 4) +  
+  geom_step(data = green_votes, 
+            aes(y = `w-gps`, x = year), 
+            color="grey") +
   theme_minimal() +
   ylab("Zustimmung zu Position der GPS") + xlab("Abstimmungsdatum") + 
   theme(axis.text = element_text(size = 10), 
         axis.title = element_text(size=15)) +
-  geom_hline(yintercept = 50, linetype = "dashed", color = "lightgrey") +
+  geom_hline(yintercept = 50, 
+             linetype = "dashed", 
+             color = "lightgrey") +
   scale_shape_manual(values = c(21, 22)) +
   scale_colour_manual(values = c("black", "white")) +
-  guides(fill=guide_legend(title="Rechtsform", override.aes = list(shape = 21, colour = NA)),
+  guides(fill=guide_legend(title="Rechtsform", 
+         override.aes = list(shape = 21, colour = NA)),
          shape=guide_legend(title="Umweltthema"),
          colour="none")
 
@@ -64,8 +71,8 @@ green_votes_perioden <- green_votes %>%
   mutate(Sicherheitspolitik = ifelse(`sicherheitspolitik == 1` == FALSE, 0, Sicherheitspolitik)) %>%
   add_count(perioden, landwirtschaft == 1, name = "Landwirtschaft") %>%
   mutate(Landwirtschaft = ifelse(`landwirtschaft == 1` == FALSE, 0, Landwirtschaft)) %>%
-  add_count(perioden, oefffinanzen == 1, name = "oefffinanzen Finanzen") %>%
-  mutate(oefffinanzen = ifelse(`oefffinanzen == 1` == FALSE, 0, oefffinanzen)) %>%
+  add_count(perioden, oefffinanzen == 1, name = "Oefffinanzen") %>%
+  mutate(Oefffinanzen = ifelse(`oefffinanzen == 1` == FALSE, 0, Oefffinanzen)) %>%
   add_count(perioden, energie == 1, name = "Energie") %>%
   mutate(Energie = ifelse(`energie == 1` == FALSE, 0, Energie)) %>%
   add_count(perioden, verkehr_infrastruktur == 1, name = "verkehr_infrastruktur_year") %>%
@@ -78,7 +85,7 @@ green_votes_perioden <- green_votes %>%
   # mutate(kultur_religion_medien_year = ifelse(`kultur_religion_medien == 1` == FALSE, 0, kultur_religion_medien_year)) %>%
   # add_count(perioden, aussenpolitik == 1, name = "aussenpolitik_year") %>%
   # mutate(aussenpolitik_year = ifelse(`aussenpolitik == 1` == FALSE, 0, aussenpolitik_year)) %>%
-  select(perioden, Sozialpolitik, Wirtschaft, `1st.dim_year`, `2nd.dim_year`, Staatsordnung, Sicherheitspolitik, Landwirtschaft, oefffinanzen,
+  dplyr::select(perioden, Sozialpolitik, Wirtschaft, `1st.dim_year`, `2nd.dim_year`, Staatsordnung, Sicherheitspolitik, Landwirtschaft, Oefffinanzen,
          Energie, verkehr_infrastruktur_year, umwelt_lebensraum_year, bildung_forschung_year) %>%
   group_by(perioden,) %>%
   summarise_all(~ max(., na.rm=T))
@@ -98,10 +105,13 @@ green_votes_first_second$key <- recode_factor(green_votes_first_second$key, '1st
                                               '2nd.dim_year'="Kulturelle Dimension")
 
 
-ggplot(data = green_votes_first_second, aes(y = value, x = perioden)) +
-  geom_col() + facet_wrap(~key) +
+ggplot(data = green_votes_first_second, 
+       aes(y = value, x = perioden)) +
+  geom_col() + 
+  facet_wrap(~key) +
   theme_minimal() +
-  xlab("Zeitperioden") + ylab("Jahresdurchschnitt in Zeitperioden initiierte Abstimmungen") +
+  xlab("Zeitperioden") + 
+  ylab("Jahresdurchschnitt in Zeitperioden initiierte Abstimmungen") +
   scale_x_discrete(labels=c("1" = "1980-1991", "2" = "1992-2002",
                             "3" = "2003-2011", "4" = "2012-2016", "5" = "2017-heute")) +
   theme(axis.text.x = element_text(angle = 45, size = 10),
@@ -128,10 +138,13 @@ green_votes_themes$key <- recode_factor(green_votes_themes$key,
 
 
 
-ggplot(data = green_votes_themes, aes(y = value, x = perioden)) +
-  geom_col() + facet_wrap(~key) +
+ggplot(data = green_votes_themes, 
+       aes(y = value, x = perioden)) +
+  geom_col() + 
+  facet_wrap(~key) +
   theme_minimal() +
-  xlab("Zeitperioden") + ylab("Jahresdurchschnitt in Zeitperioden initiierte Abstimmungen") +
+  xlab("Zeitperioden") + 
+  ylab("Jahresdurchschnitt in Zeitperioden initiierte Abstimmungen") +
   scale_x_discrete(labels=c("1" = "1980-1991", "2" = "1992-2002",
                             "3" = "2003-2011", "4" = "2012-2016", "5" = "2017-heute")) +
   theme(axis.text.x = element_text(angle = 45, size = 6))
@@ -142,10 +155,11 @@ ggplot(data = green_votes_themes, aes(y = value, x = perioden)) +
 #Grafik 4: Anteil Abstimmungen, zu denen Die GPS und die SPS Stimmempfehlungen in einer Zeitperiode nach Thema abgaben
 ###################
 
-load("Daten/Grüne_Abstimmungen.RData")
+load("Grüne_Abstimmungen.RData")
 
 green_votes <- green_votes %>%
   rename_all(~str_replace_all(.,"\\-","_"))
+
 green_votes$umwelt <-  recode(green_votes$umwelt, `1` = "Umweltthema", `0` = "anderes Thema")
 green_votes$rechtsform <-  recode(green_votes$rechtsform, `2` = "fakultatives Referendum", `3` = "Volksinitiative")
 green_votes$initiiert <- recode(green_votes$initiiert, `1` = "initiiert", `2` = "mitgetragen")
@@ -157,7 +171,7 @@ parolen_year <- green_votes %>%
   mutate(parolen_year = ifelse(`(umwelt == "Umweltthema") & (p_gps %in% c(1, 2))` == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_umweltvorlagen = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -`(umwelt == "Umweltthema") & (p_gps %in% c(1, 2))`)
+  dplyr::select(-v_year, -parolen_year, -`(umwelt == "Umweltthema") & (p_gps %in% c(1, 2))`)
 
 
 parolen_year <- parolen_year %>%
@@ -167,7 +181,7 @@ parolen_year <- parolen_year %>%
   mutate(parolen_year = ifelse(parole == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_2nddim = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -parole)
+  dplyr::select(-v_year, -parolen_year, -parole)
 
 
 parolen_year <- parolen_year %>%
@@ -177,11 +191,11 @@ parolen_year <- parolen_year %>%
   mutate(parolen_year = ifelse(parole == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_1stdim = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -parole)
+  dplyr::select(-v_year, -parolen_year, -parole)
 
 
 parolen_year <- parolen_year %>%
-  select(year, perioden, parolen_umweltvorlagen, parolen_2nddim, parolen_1stdim) %>%
+  dplyr::select(year, perioden, parolen_umweltvorlagen, parolen_2nddim, parolen_1stdim) %>%
   group_by(year) %>%
   summarise_all(~ max(., na.rm=T))
 
@@ -203,9 +217,12 @@ parolen_perioden$key <- recode_factor(parolen_perioden$key,
 
 
 plot_gps <- ggplot(data = parolen_perioden) +
-  geom_col(aes(x = perioden, y = value)) + facet_wrap(~key)+
+  geom_col(aes(x = perioden, y = value)) + 
+  facet_wrap(~key) +
   theme_minimal() +
-  xlab("Zeitperioden") + ylab("Anteil Parolen zu Vorlagen") + ggtitle("GPS") +
+  xlab("Zeitperioden") + 
+  ylab("Anteil Parolen zu Vorlagen") + 
+  ggtitle("GPS") +
   theme(axis.text.x = element_text(angle = 45, size = 10),
         strip.text.x = element_text(size = 12)) +
   scale_x_discrete(labels=c("1" = "1980-1991", "2" = "1992-2002",
@@ -221,7 +238,7 @@ parolen_year_sps <- green_votes %>%
   mutate(parolen_year = ifelse(`(umwelt == "Umweltthema") & (p_sps %in% c(1, 2))` == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_umweltvorlagen = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -`(umwelt == "Umweltthema") & (p_sps %in% c(1, 2))`)
+  dplyr::select(-v_year, -parolen_year, -`(umwelt == "Umweltthema") & (p_sps %in% c(1, 2))`)
 
 
 parolen_year_sps <- parolen_year_sps %>%
@@ -231,7 +248,7 @@ parolen_year_sps <- parolen_year_sps %>%
   mutate(parolen_year = ifelse(parole == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_2nddim = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -parole)
+  dplyr::select(-v_year, -parolen_year, -parole)
 
 
 parolen_year_sps <- parolen_year_sps %>%
@@ -241,11 +258,11 @@ parolen_year_sps <- parolen_year_sps %>%
   mutate(parolen_year = ifelse(parole == FALSE, 0, parolen_year)) %>%
   group_by(year) %>%
   mutate(parolen_1stdim = parolen_year / v_year) %>%
-  select(-v_year, -parolen_year, -parole)
+  dplyr::select(-v_year, -parolen_year, -parole)
 
 
 parolen_year_sps <- parolen_year_sps %>%
-  select(year, perioden, parolen_umweltvorlagen, parolen_2nddim, parolen_1stdim) %>%
+  dplyr::select(year, perioden, parolen_umweltvorlagen, parolen_2nddim, parolen_1stdim) %>%
   group_by(year) %>%
   summarise_all(~ max(., na.rm=T))
 
@@ -268,9 +285,12 @@ parolen_perioden_sps$key <- recode_factor(parolen_perioden_sps$key,
                                           'p_umweltvorlagen'="Umweltthemen")
 
 plot_sp <- ggplot(data = parolen_perioden_sps) +
-  geom_col(aes(x = perioden, y = value)) + facet_wrap(~key)+
+  geom_col(aes(x = perioden, y = value)) + 
+  facet_wrap(~key) +
   theme_minimal() +
-  xlab("Zeitperioden") + ylab("Anteil Parolen zu Vorlagen") + ggtitle("SPS") +
+  xlab("Zeitperioden") + 
+  ylab("Anteil Parolen zu Vorlagen") + 
+  ggtitle("SPS") +
   theme(axis.text.x = element_text(angle = 45, size = 10),
         strip.text.x = element_text(size = 12)) +
   scale_x_discrete(labels=c("1" = "1980-1991", "2" = "1992-2002",
